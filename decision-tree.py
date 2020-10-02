@@ -7,22 +7,18 @@ import math
 class Decision_Tree:
     attr_value_dict = dict()
     tree = dict()
+    depth_reached = 0
+    accuracy = 0
 
-    def __init__(self, tre, vae, tee, depth):
+    def __init__(self, tre, tee, depth):
         self.tre = tre
-        self.vae = vae
         self.tee = tee
         self.depth = depth
-        self.depth_reached = 0
 
         for attr in tre[0].keys():
             # The discrete values each attribute can take
             self.attr_value_dict[attr] = list()
             for eg[0] in tre:
-                if eg[0][attr] not in self.attr_value_dict[attr]:
-                    self.attr_value_dict[attr].append(eg[0][attr])
-
-            for eg[0] in vae:
                 if eg[0][attr] not in self.attr_value_dict[attr]:
                     self.attr_value_dict[attr].append(eg[0][attr])
 
@@ -81,7 +77,7 @@ class Decision_Tree:
 
     def id3_tree(self, s, current_depth):
         """ Return a decision tree. """
-        # Keep track of maximum depth reached
+        # Keep track of depth reached
         if self.depth_reached < current_depth:
             self.depth_reached = current_depth
 
@@ -143,7 +139,6 @@ if __name__ == "__main__":
     # Shuffling for randomness
     random.shuffle(examples)
     tre = list()
-    vae = list()
     tee = list()
 
     # Split the data 80/20
@@ -151,9 +146,4 @@ if __name__ == "__main__":
     tre = examples[:split_index]
     tee = examples[split_index:]
 
-    # Split to training, validation
-    split_index = (int)((80 / 100) * len(tre))
-    vae = tre[split_index:]
-    tre = tre[:split_index]
-
-    decision_tree = Decision_Tree(tre, vae, tee, depth)
+    decision_tree = Decision_Tree(tre, tee, depth)
