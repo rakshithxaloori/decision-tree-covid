@@ -75,14 +75,14 @@ class Decision_Tree:
         tree[node_attr] = list()
         # Split the set with values of the attr
         for key, value in self.split_node(tre, node_attr).items():
-            tree[node_attr].append((key, self.id3_tree(value)))
+            tree[node_attr].append((key, self.id3_tree(value, 0)))
 
         self.tree = tree
 
-    def id3_tree(self, s):
+    def id3_tree(self, s, current_depth):
         """ Return a decision tree. """
         # Base case
-        if len(s) == 0:
+        if len(s) == 0 or current_depth == self.depth:
             return self.most_freq(s)
         
         # Recursive algorithm
@@ -93,7 +93,7 @@ class Decision_Tree:
             if len(value) == 0:
                 tree[best_attr].append((key, self.most_freq(s)))
             else:
-                tree[best_attr].append((key, self.id3_tree(value)))
+                tree[best_attr].append((key, self.id3_tree(value, current_depth+1)))
 
         return tree
 
