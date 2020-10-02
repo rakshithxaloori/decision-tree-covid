@@ -47,6 +47,7 @@ if __name__ == "__main__":
     tre = examples[:split_index]
     tee = examples[split_index:]
 
+    # Split to training, validation
     split_index = (int)((80 / 100) * len(tre))
     vae = tre[split_index:]
     tre = tre[:split_index]
