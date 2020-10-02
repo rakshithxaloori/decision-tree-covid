@@ -8,21 +8,15 @@ class Decision_Tree:
     attr_value_dict = dict()
     tree = dict()
     depth_reached = 0
-    accuracy = 0
 
-    def __init__(self, tre, tee, depth):
+    def __init__(self, tre, depth):
         self.tre = tre
-        self.tee = tee
         self.depth = depth
 
         for attr in tre[0].keys():
             # The discrete values each attribute can take
             self.attr_value_dict[attr] = list()
             for eg[0] in tre:
-                if eg[0][attr] not in self.attr_value_dict[attr]:
-                    self.attr_value_dict[attr].append(eg[0][attr])
-
-            for eg[0] in tee:
                 if eg[0][attr] not in self.attr_value_dict[attr]:
                     self.attr_value_dict[attr].append(eg[0][attr])
 
@@ -98,8 +92,13 @@ class Decision_Tree:
 
         return tree
 
-    def post_pruning(self):
+    def pruning(self):
         """ Return the best tree with best accuracy on validation set. """
+        # TODO
+        pass
+
+    def test_accuracy(self, tee):
+        """ Test the accuracy of the model with the tee set. """
         # TODO
         pass
 
@@ -146,4 +145,4 @@ if __name__ == "__main__":
     tre = examples[:split_index]
     tee = examples[split_index:]
 
-    decision_tree = Decision_Tree(tre, tee, depth)
+    decision_tree = Decision_Tree(tre, depth)
