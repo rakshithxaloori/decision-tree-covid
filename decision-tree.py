@@ -87,7 +87,7 @@ class Decision_Tree:
                     # Pop the attr, not needed anymore
                     if pop:
                         eg[0].pop(attr)
-                    split_lists[value].append(eg)
+                    split_lists[value].append(copy.deepcopy(eg))
                     break
 
         return split_lists
@@ -212,6 +212,6 @@ if __name__ == "__main__":
     tee = examples[split_index:]
 
     decision_tree = Decision_Tree(tre, depth)
-    print(decision_tree.tree)
     print("---------------------------------------")
+    print(decision_tree.tree)
     print(decision_tree.depth_reached)
