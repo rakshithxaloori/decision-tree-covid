@@ -13,6 +13,7 @@ class Decision_Tree:
         self.vae = vae
         self.tee = tee
         self.depth = depth
+        self.depth_reached = 0
 
         for attr in tre[0].keys():
             # The discrete values each attribute can take
@@ -40,7 +41,6 @@ class Decision_Tree:
             count_dict[eg[1]] += 1
 
         return max(count_dict, key=count_dict.get)
-
 
     def entropy_gain(self, s, attr):
         """ Entropy gain if attr is chosen as node. """
@@ -81,10 +81,14 @@ class Decision_Tree:
 
     def id3_tree(self, s, current_depth):
         """ Return a decision tree. """
+        # Keep track of maximum depth reached
+        if self.depth_reached < current_depth:
+            self.depth_reached = current_depth
+
         # Base case
-        if len(s) == 0 or current_depth == self.depth:
+        if len(s) == 0 or (current_depth == self.depth and self.depth != -1):
             return self.most_freq(s)
-        
+
         # Recursive algorithm
         best_attr = self.best_attr(s)
         tree = dict()
@@ -93,7 +97,8 @@ class Decision_Tree:
             if len(value) == 0:
                 tree[best_attr].append((key, self.most_freq(s)))
             else:
-                tree[best_attr].append((key, self.id3_tree(value, current_depth+1)))
+                tree[best_attr].append(
+                    (key, self.id3_tree(value, current_depth+1)))
 
         return tree
 
@@ -121,14 +126,14 @@ if __name__ == "__main__":
             # Making the values discrete
             data = (
                 {
-                # Choosing month of date
-                "date": row[0].split("/")[0],
-                # log10 of confirmed
-                "confirmed": int(math.log10(int(row[1]))),
-                # log10 of recovered
-                "recovered": int(math.log10(int(row[2]))),
-                # log10 of deaths
-                "deaths": int(math.log10(int(row[3]))),
+                    # Choosing month of date
+                    "date": row[0].split("/")[0],
+                    # log10 of confirmed
+                    "confirmed": int(math.log10(int(row[1]))),
+                    # log10 of recovered
+                    "recovered": int(math.log10(int(row[2]))),
+                    # log10 of deaths
+                    "deaths": int(math.log10(int(row[3]))),
                 }
                 # TODO make it discrete
                 "increase_rate": (row[4])
