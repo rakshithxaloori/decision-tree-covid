@@ -9,7 +9,6 @@ class Decision_Tree:
     tree = dict()
 
     def __init__(self, tre, vae, tee, depth):
-        # TODO
         self.tre = tre
         self.vae = vae
         self.tee = tee
@@ -97,6 +96,11 @@ class Decision_Tree:
                 tree[best_attr].append((key, self.id3_tree(value)))
 
         return tree
+
+    def post_pruning(self):
+        """ Return the best tree with best accuracy on validation set. """
+        # TODO
+        pass
 
 
 if __name__ == "__main__":
