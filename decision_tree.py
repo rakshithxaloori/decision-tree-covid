@@ -91,7 +91,23 @@ class Decision_Tree:
     def id3(self):
         """ Given a set of examples, returns a decision tree. """
         # Create a root node.
-        # TODO base case
+        # Base case
+        if len(self.tre[0][0].keys()) == 0:
+            # No attributes
+            return self.most_freq(self.tre)
+
+        # Base case if all TEs are same
+        same = True
+        first_target_val = self.tre[0][1]
+        for eg in self.tre:
+            if eg[1] != first_target_val:
+                same = False
+                break
+
+        if same:
+            return first_target_val
+
+        # Build the tree
         node_attr = self.best_attr(self.tre)
         tree = dict()
         tree[node_attr] = list()
