@@ -79,8 +79,6 @@ class Decision_Tree:
         split_lists = dict()
         for eg in s:
             for value in self.attr_value_dict[attr]:
-                if attr not in eg[0].keys():
-                    continue
                 if value not in split_lists.keys():
                     split_lists[value] = list()
                 if eg[0][attr] == value:
@@ -89,7 +87,6 @@ class Decision_Tree:
                     if pop:
                         new_eg[0].pop(attr)
                     split_lists[value].append(new_eg)
-                    break
 
         return split_lists
 
@@ -146,11 +143,46 @@ class Decision_Tree:
         # TODO
         pass
 
+    def test_eg(self, eg):
+        """ Test and return True/False if the eg matches and doesn't respectively. """
+        tree = copy.deepcopy(self.tree)
+
+        for pair in tree.values():
+            print(pair)
+
+        while (type(tree) == dict):
+            # Iterate until leaf node is reached
+            attr = list(tree.keys())[0]
+            for pair in tree.values():
+                if eg[0][attr] == pair[0]:
+                    # If the attribute matches, proceed along that sub-tree
+                    tree = pair[1]
+                    print(tree)
+                    break
+
+        if tree == eg[1]:
+            return True
+        else:
+            return False
+
     def test_accuracy(self, tee):
         """ Test the accuracy of the model with the tee set. """
-        # TODO
         # TODO if accuracy is not good, properly discretise_target and then do
-        pass
+        count_true = 0
+        count_false = 0
+
+        for eg in tee:
+            print("Calculating for eg", count_true + count_false)
+            if self.test_eg(eg) is True:
+                count_true += 1
+            else:
+                count_false += 1
+
+        print(count_true)
+        print(count_false)
+
+        accuracy = (float(count_true))/(count_true+count_false)
+        return accuracy
 
 
 def discretise_target(value):
@@ -217,3 +249,4 @@ if __name__ == "__main__":
     print("---------------------------------------")
     print(decision_tree.tree)
     print(decision_tree.depth_reached)
+    # print(decision_tree.test_accuracy(tee))
