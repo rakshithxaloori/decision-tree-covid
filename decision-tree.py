@@ -13,7 +13,7 @@ class Decision_Tree:
 
     def __init__(self, tre, depth):
         self.tre = tre
-        self.depth = depth
+        self.max_depth = depth
 
         for attr in tre[0][0].keys():
             # The discrete values each attribute can take
@@ -77,7 +77,7 @@ class Decision_Tree:
     def split_node(self, s, attr, pop=True):
         """ Return a dict[value] = list, s split about a value of an attr """
         split_lists = dict()
-        for eg in tre:
+        for eg in s:
             for value in self.attr_value_dict[attr]:
                 if attr not in eg[0].keys():
                     continue
@@ -85,9 +85,10 @@ class Decision_Tree:
                     split_lists[value] = list()
                 if eg[0][attr] == value:
                     # Pop the attr, not needed anymore
+                    new_eg = copy.deepcopy(eg)
                     if pop:
-                        eg[0].pop(attr)
-                    split_lists[value].append(copy.deepcopy(eg))
+                        new_eg[0].pop(attr)
+                    split_lists[value].append(new_eg)
                     break
 
         return split_lists
@@ -102,7 +103,7 @@ class Decision_Tree:
         # Split the set with values of the attr
 
         for key, value in self.split_node(tre, node_attr).items():
-            tree[node_attr].append((key, self.id3_tree(value, 0)))
+            tree[node_attr].append((key, self.id3_tree(value, 1)))
 
         self.tree = tree
 
@@ -113,7 +114,7 @@ class Decision_Tree:
             self.depth_reached = current_depth
 
         # Base case
-        if len(s[0][0].keys()) == 0 or (current_depth == self.depth and self.depth != -1):
+        if len(s[0][0].keys()) == 0 or ((current_depth == self.max_depth) and (self.max_depth != -1)):
             return self.most_freq(s)
 
         # If all target values are same
@@ -137,6 +138,7 @@ class Decision_Tree:
             else:
                 tree[best_attr].append(
                     (key, self.id3_tree(value, current_depth+1)))
+
         return tree
 
     def pruning(self):
@@ -147,11 +149,11 @@ class Decision_Tree:
     def test_accuracy(self, tee):
         """ Test the accuracy of the model with the tee set. """
         # TODO
-        # TODO if accuracy is not good, properly discretise and then do
+        # TODO if accuracy is not good, properly discretise_target and then do
         pass
 
 
-def discretise(value):
+def discretise_target(value):
     # Convert to float
     if len(value) == 0:
         return 1
@@ -175,7 +177,7 @@ if __name__ == "__main__":
         sys.exit("Usage: python3 decision-tree.py csv_file_path depth")
 
     csv_path = sys.argv[1]
-    depth = sys.argv[2]
+    depth = int(sys.argv[2])
     examples = list()
 
     with open(csv_path) as csv_file:
@@ -197,7 +199,7 @@ if __name__ == "__main__":
                     # log10 of deaths
                     "deaths": int(math.log10(int(row[3]))),
                 },
-                discretise(row[4])
+                discretise_target(row[4])
             )
             examples.append(data)
 
