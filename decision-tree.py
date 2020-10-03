@@ -11,9 +11,10 @@ class Decision_Tree:
     tree = dict()
     depth_reached = 0
 
-    def __init__(self, tre, depth):
+    def __init__(self, tre, depth, pruning_bool):
         self.tre = tre
         self.max_depth = depth
+        self.pruning_bool = pruning_bool
 
         for attr in tre[0][0].keys():
             # The discrete values each attribute can take
@@ -125,8 +126,11 @@ class Decision_Tree:
         if same:
             return initial_target_value
 
-        # Recursive algorithm
         best_attr = self.best_attr(s)
+        if self.pruning_bool and self.pruning(s, best_attr):
+            return self.most_freq(s)
+
+        # Recursive algorithm
         tree = dict()
         tree[best_attr] = list()
         for key, value in self.split_node(s, best_attr).items():
@@ -138,10 +142,38 @@ class Decision_Tree:
 
         return tree
 
-    def pruning(self):
-        """ Return the best tree with best accuracy on validation set. """
-        # TODO
-        pass
+    def expected_value(self, attr, attr_val_list):
+        """ Return the expected value of attr in s. """
+        prob_dict = dict()
+        for each_val_pos in self.attr_value_dict[attr]:
+            prob_dict[each_val_pos] = 0
+
+        for each_val in attr_val_list:
+            prob_dict[each_val] += 1
+
+        expected_value = 0
+        for val, val_count in prob_dict.items():
+            expected_value += (val_count/len(attr_val_list))*(val)
+
+        return expected_value
+
+    def pruning(self, s, attr):
+        """ Return the best tree by performing statistical test pre-pruning. """
+        # Performing a chi-square statistic
+        # Create a list of values with attr in s
+        attr_val_list = list()
+        for eg in s:
+            attr_val_list.append(eg[0][attr])
+
+        expected_value = self.expected_value(attr, attr_val_list)
+        chi_sqr = 0
+        for each_val in attr_val_list:
+            chi_sqr += (each_val - expected_value) * \
+                (each_val - expected_value)/expected_value
+
+        # When the chi-square value is low, return True(prune), else return False(don't prune)
+        chi_square_threshold = 1.65
+        return (chi_sqr > chi_square_threshold)
 
     def test_eg(self, eg):
         """ Test and return True/False if the eg matches and doesn't respectively. """
@@ -163,7 +195,6 @@ class Decision_Tree:
 
     def test_accuracy(self, tee):
         """ Test the accuracy of the model with the tee set. """
-        # TODO if accuracy is not good, properly discretise_target and then do
         count_true = 0
         count_false = 0
 
@@ -197,11 +228,19 @@ def discretise_target(value):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python3 decision-tree.py csv_file_path depth")
+    if len(sys.argv) != 4:
+        sys.exit("Usage: python3 decision-tree.py csv_file_path depth pruning")
 
     csv_path = sys.argv[1]
     depth = int(sys.argv[2])
+    pruning_string = sys.argv[3]
+    if pruning_string == "True":
+        pruning = True
+    elif pruning_string == "False":
+        pruning = False
+    else:
+        sys.exit("Pruning is either True/False")
+
     examples = list()
 
     with open(csv_path) as csv_file:
@@ -237,8 +276,10 @@ if __name__ == "__main__":
     tre = examples[:split_index]
     tee = examples[split_index:]
 
-    decision_tree = Decision_Tree(tre, depth)
-    print("---------------------------------------")
+    decision_tree = Decision_Tree(tre, depth, pruning)
+    print("DECISION TREE")
     print(decision_tree.tree)
+    print("MAXIMUM DEPTH REACHED")
     print(decision_tree.depth_reached)
-    print(decision_tree.test_accuracy(tee))
+    print("ACCURACY OVER TESTING")
+    print(decision_tree.test_accuracy(tee)*100, "%")
