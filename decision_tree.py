@@ -222,7 +222,7 @@ class Decision_Tree:
 
     def sub_tree_str(self, tree, level, add_str):
         if type(tree) != dict:
-            return "\t"*level+'( '+add_str+' )'+' '+repr(tree)+"\n"
+            return "\t"*level+'( '+add_str+' )'+' '+'( target = '+repr(tree)+' )'+"\n"
         ret = "\t"*level+repr(list(tree.keys())[0])+"\n"
         for child in list(tree.values())[0]:
             ret += str(self.sub_tree_str(child[1], level+1,
