@@ -147,17 +147,13 @@ class Decision_Tree:
         """ Test and return True/False if the eg matches and doesn't respectively. """
         tree = copy.deepcopy(self.tree)
 
-        for pair in tree.values():
-            print(pair)
-
         while (type(tree) == dict):
             # Iterate until leaf node is reached
             attr = list(tree.keys())[0]
-            for pair in tree.values():
+            for pair in list(tree.values())[0]:
                 if eg[0][attr] == pair[0]:
                     # If the attribute matches, proceed along that sub-tree
                     tree = pair[1]
-                    print(tree)
                     break
 
         if tree == eg[1]:
@@ -172,14 +168,10 @@ class Decision_Tree:
         count_false = 0
 
         for eg in tee:
-            print("Calculating for eg", count_true + count_false)
             if self.test_eg(eg) is True:
                 count_true += 1
             else:
                 count_false += 1
-
-        print(count_true)
-        print(count_false)
 
         accuracy = (float(count_true))/(count_true+count_false)
         return accuracy
@@ -249,4 +241,4 @@ if __name__ == "__main__":
     print("---------------------------------------")
     print(decision_tree.tree)
     print(decision_tree.depth_reached)
-    # print(decision_tree.test_accuracy(tee))
+    print(decision_tree.test_accuracy(tee))
