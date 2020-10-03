@@ -219,3 +219,22 @@ class Decision_Tree:
 
         accuracy = (float(count_true))/(count_true+count_false)
         return accuracy
+
+    def sub_tree_str(self, tree, level, add_str):
+        if type(tree) != dict:
+            return "\t"*level+'( '+add_str+' )'+' '+repr(tree)+"\n"
+        ret = "\t"*level+repr(list(tree.keys())[0])+"\n"
+        for child in list(tree.values())[0]:
+            ret += str(self.sub_tree_str(child[1], level+1,
+                                         str(list(tree.keys())[0]) + ' = ' + str(child[0])))
+        return ret
+
+    def __str__(self, level=0):
+        ret = "\t"*level+repr(list(self.tree.keys())[0])+"\n"
+        for child in list(self.tree.values())[0]:
+            ret += str(self.sub_tree_str(child[1], level+1, str(
+                list(self.tree.keys())[0]) + ' = ' + str(child[0])))
+        return ret
+
+    def __repr__(self):
+        return '<tree node representation>'
