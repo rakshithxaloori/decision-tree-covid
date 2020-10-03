@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
     decision_tree = Decision_Tree(tre, depth, pruning)
     print("DECISION TREE")
-    print(decision_tree.tree)
+    print(decision_tree)
     print("MAXIMUM DEPTH REACHED")
     print(decision_tree.depth_reached)
     print("ACCURACY OVER TESTING")
