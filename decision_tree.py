@@ -92,9 +92,10 @@ class Decision_Tree:
         """ Given a set of examples, returns a decision tree. """
         # Create a root node.
         # Base case
-        if len(self.tre[0][0].keys()) == 0:
+        if (len(self.tre[0][0].keys()) == 0) or (self.max_depth == 0):
             # No attributes
-            return self.most_freq(self.tre)
+            self.tree = self.most_freq(self.tre)
+            return
 
         # Base case if all TEs are same
         same = True
@@ -105,14 +106,15 @@ class Decision_Tree:
                 break
 
         if same:
-            return first_target_val
+            self.tree = first_target_val
+            return
 
         # Build the tree
         node_attr = self.best_attr(self.tre)
         tree = dict()
         tree[node_attr] = list()
-        # Split the set with values of the attr
 
+        # Split the set with values of the attr
         for key, value in self.split_node(self.tre, node_attr).items():
             tree[node_attr].append((key, self.id3_tree(value, 1)))
 
@@ -230,6 +232,8 @@ class Decision_Tree:
         return ret
 
     def __str__(self, level=0):
+        if self.max_depth == 0:
+            return(str(self.tree))
         ret = "\t"*level+repr(list(self.tree.keys())[0])+"\n"
         for child in list(self.tree.values())[0]:
             ret += str(self.sub_tree_str(child[1], level+1, str(
